@@ -12,15 +12,19 @@ public final class ConsentManager: ObservableObject, ConsentManagerProtocol {
 
     private let interactor: ConsentInteractorProtocol
     internal let config: ConsentDialogConfig
+    private let logger: RewardSDKLoggerProtocol
     
-    internal init(interactor: ConsentInteractorProtocol, config: ConsentDialogConfig) {
+    internal init(interactor: ConsentInteractorProtocol, config: ConsentDialogConfig, logger: RewardSDKLoggerProtocol) {
         self.interactor = interactor
         self.config = config
+        self.logger = logger
     }
 
     public func showConsentDialog() {
+        logger.log("showConsentDialog called", level: .info)
         guard interactor.shouldRequestConsent() else { return }
         isDialogVisible = true
+        logger.log("Consent dialog presented to user", level: .info)
     }
 
     public func getConsentStatus() -> Bool? {
@@ -30,5 +34,6 @@ public final class ConsentManager: ObservableObject, ConsentManagerProtocol {
     internal func handleDecision(_ granted: Bool) {
         interactor.recordDecision(granted)
         isDialogVisible = false
+        logger.log("Consent decision recorded: granted=\(granted)", level: .info)
     }
 }
