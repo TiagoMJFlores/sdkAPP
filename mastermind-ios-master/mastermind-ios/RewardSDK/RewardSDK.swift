@@ -12,3 +12,7 @@ import Foundation
 public func makeConsentManager() -> ConsentManager {
     ConsentManager(interactor: ConsentInteractor(storage: UserDefaultsConsentStorage()), config: .default)
 }
+
+public func makeRewardedManager() -> RewardedManager {
+    RewardedManager(config: .default)
+}

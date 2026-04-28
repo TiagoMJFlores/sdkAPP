@@ -12,15 +12,40 @@ struct ContentView: View {
     private var secretPegView = SecretPegView()
     private var boardView = BoardView()
     
-    @ObservedObject var consentManager: ConsentManager
+    private var hintMessage: String {
+        guard let color = hintColor else { return "No hint available yet." }
+        return "One of the secret colors is \(name(for: color))."
+    }
 
     
+    private func name(for color: Color) -> String {
+        switch color {
+        case .blue: return "blue"
+        case .pink: return "pink"
+        case .green: return "green"
+        case .yellow: return "yellow"
+        case .red: return "red"
+        case .orange: return "orange"
+        default: return "unknown"
+        }
+    }
+    
+    @ObservedObject var consentManager: ConsentManager
+    @StateObject private var rewardedManager = makeRewardedManager()
+
+
     @State private var round: Int = 7;
     @State private var secretColors: [Color] = []
     @State private var alertFillColorsIsVisible: Bool = false
     @State private var alertWinIsVisible: Bool = false
+    @State private var hintColor: Color?
+    @State private var hintAlertVisible: Bool = false
     @State private var alertOverIsVisible: Bool = false
     @State private var showAd: Bool = false
+    
+    private var gameInProgress: Bool {
+        !secretColors.isEmpty && round > 0
+    }
     
     init(consentManager: ConsentManager) {
             self.consentManager = consentManager
@@ -30,6 +55,14 @@ struct ContentView: View {
         VStack {
             secretPegView
             boardView
+            if gameInProgress {
+                Button("Hint") {
+                    rewardedManager.showRewardedView()
+                }
+                .buttonStyle(.bordered)
+                .padding(.bottom, 4)
+            }
+            
             TabBarView(restart: restart, submitLine: submitLine, clearLine: clearLine)
         }
         .alert("Oh, no!", isPresented: $alertFillColorsIsVisible) {
@@ -51,8 +84,18 @@ struct ContentView: View {
         } message: {
           Text("You loose! Let's play again!")
         }
+        .alert("Hint", isPresented: $hintAlertVisible) {
+            Button("OK") { }
+        } message: {
+            Text(hintMessage)
+        }
+        .rewardedHost(rewardedManager)
         .consentHost(consentManager)
         .onAppear {
+            rewardedManager.onClaimReward = {
+                hintColor = secretColors.randomElement()
+                hintAlertVisible = true
+            }
             if consentManager.getConsentStatus() == nil {
                 consentManager.showConsentDialog()
             }
@@ -62,6 +105,7 @@ struct ContentView: View {
     
     func restart() {
         round = 7
+        hintColor = nil
         secretPegView.hideSecret()
         boardView.cleanBoard()
     }
