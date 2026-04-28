@@ -6,13 +6,16 @@
 //
 
 import SwiftUI
+import RewardSDK
 
 @main
 struct Mastermind: App {
         
+    @StateObject private var consentManager = makeConsentManager()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(consentManager: consentManager)
         }
     }
 }

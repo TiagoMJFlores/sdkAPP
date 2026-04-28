@@ -7,3 +7,8 @@
 
 import Foundation
 
+import Foundation
+
+public func makeConsentManager() -> ConsentManager {
+    ConsentManager(interactor: ConsentInteractor(storage: UserDefaultsConsentStorage()), config: .default)
+}

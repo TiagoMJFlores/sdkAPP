@@ -6,10 +6,14 @@
 //
 
 import SwiftUI
+import RewardSDK
 
 struct ContentView: View {
     private var secretPegView = SecretPegView()
     private var boardView = BoardView()
+    
+    @ObservedObject var consentManager: ConsentManager
+
     
     @State private var round: Int = 7;
     @State private var secretColors: [Color] = []
@@ -17,6 +21,10 @@ struct ContentView: View {
     @State private var alertWinIsVisible: Bool = false
     @State private var alertOverIsVisible: Bool = false
     @State private var showAd: Bool = false
+    
+    init(consentManager: ConsentManager) {
+            self.consentManager = consentManager
+        }
     
     var body: some View {
         VStack {
@@ -42,6 +50,12 @@ struct ContentView: View {
           }
         } message: {
           Text("You loose! Let's play again!")
+        }
+        .consentHost(consentManager)
+        .onAppear {
+            if consentManager.getConsentStatus() == nil {
+                consentManager.showConsentDialog()
+            }
         }
 
     }
@@ -120,6 +134,6 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        ContentView(consentManager: makeConsentManager())
     }
 }

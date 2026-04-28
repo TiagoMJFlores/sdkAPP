@@ -7,13 +7,22 @@
 
 import Foundation
 
+internal protocol ConsentInteractorProtocol {
+    func currentStatus() -> Bool?
+    func recordDecision(_ granted: Bool)
+    func shouldRequestConsent() -> Bool
+}
+
 internal struct ConsentInteractor {
     private let storage: ConsentStorage
 
     init(storage: ConsentStorage) {
         self.storage = storage
     }
+}
 
+extension ConsentInteractor: ConsentInteractorProtocol {
+    
     func currentStatus() -> Bool? {
         storage.loadConsent()
     }
