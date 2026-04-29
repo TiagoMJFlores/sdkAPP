@@ -1,3 +1,5 @@
+
+
 ## Architecture
 
 The SDK follows Clean Architecture where it adds value, not as a ritual. The Consent feature has three layers because it has genuine business logic (when to show the dialog, treating rejection as final) and persistence to abstract.
@@ -70,3 +72,8 @@ The choice changes whether `RewardedManager` needs Data/Domain layers (counters)
 
 - **Analytics or non-sensitive data** — a custom in-app dialog (what I implemented) is appropriate, persisted in UserDefaults.
 - **Cross-app tracking with IDFA** — the consent should be Apple's ATTrackingManager.requestTrackingAuthorization, paired with NSUserTrackingUsageDescription in Info.plist. The system itself shows the dialog and persists the choice; a custom one is not appropriate.
+
+
+# API note
+
+The protocol defines getConsentStatus() -> Bool? where nil means "no decision yet". I kept the signature to honour the brief, but in production I would prefer as ConsentStatus enum aligned with Apple's permission APIs — cleaner semantics and open to future states without breaking callers.
