@@ -7,6 +7,9 @@ The Rewarded feature only has a Presenter. There is no business rule worth extra
 
 There are unit tests for ConsentInteractor that's where the business rules live (when to show the dialog, "rejection is final"). The tests use a small spy for the storage so they don't touch UserDefaults. 
 
+## Documentation
+Implemented
+
 ## Logging
 
 Internal logging uses the **Facade pattern**. RewardSDKLogger exposes a single log(_:level:) method to the rest of the SDK and fans each call out to multiple LogSink implementations in parallel:
