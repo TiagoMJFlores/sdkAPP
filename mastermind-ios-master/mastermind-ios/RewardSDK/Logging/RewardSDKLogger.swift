@@ -28,7 +28,7 @@ extension RewardSDKLogger: RewardSDKLoggerProtocol {
 
 internal func makeDefaultLogger() -> RewardSDKLogger {
     RewardSDKLogger(sinks: [
-        FirebaseSink(),
+        OSLogSink(),
         SentrySink()
     ])
 }
